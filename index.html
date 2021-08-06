@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Vite App</title>
+    </head>
+    <body>
+        <div id="app"></div>
+        <a href="#" class="ts-modal-toggle">Link 1</a>
+        <a href="#" class="ts-modal-toggle">Link 2</a>
+        <a href="#" class="ts-modal-toggle">Link 3</a>
+
+        <div
+            class="modal ts-modal"
+            id="modal-1"
+            aria-hidden="false"
+        >
+            <div class="modal__overlay ts-close" tabindex="-1">
+                <div
+                    class="modal__container"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="modal-1-title"
+                >
+                    <header class="modal__header">
+                        <h2 class="modal__title" id="modal-1-title">
+                            Modal
+                        </h2>
+                        <button
+                            class="modal__close ts-close"
+                            aria-label="Close modal"
+                        ></button>
+                    </header>
+                    <div class="modal__content" id="modal-1-content">
+                        <p>To close modal hit the <code>esc</code> button, click on the
+                            overlay or just click the close button.
+                        </p>
+                    </div>
+                    <footer class="modal__footer">
+                        <button class="modal__btn modal__btn-primary">
+                            Continue
+                        </button>
+                        <button
+                            class="modal__btn ts-close"
+                            aria-label="Close this dialog window"
+                        >
+                            Close
+                        </button>
+                    </footer>
+                </div>
+            </div>
+        </div>
+
+        <script type="module" src="/src/index.ts"></script>
+    </body>
+</html>

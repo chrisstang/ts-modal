@@ -1,0 +1,21 @@
+{
+  "name": "ts-modal",
+  "version": "0.1.0",
+  "main": "dist/ts-modal.es.js",
+  "types": "typings/index.d.ts",
+  "author": "Chris Tang <chris.tang@forefront.com.my>",
+  "license": "MIT",
+  "scripts": {
+    "start": "vite",
+    "build": "tsc && vite build",
+    "dist": "tsc && vite build && vite build -c vite.config.prod.js",
+    "serve": "vite preview"
+  },
+  "devDependencies": {
+    "sass": "^1.36.0",
+    "typescript": "^4.3.2",
+    "vite": "^2.4.3",
+    "vite-dts": "^1.0.3",
+    "vite-plugin-compress": "^2.1.0"
+  }
+}
