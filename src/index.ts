@@ -1,10 +1,8 @@
-import "./style.scss";
-
-type arrayType = string | Element[] | undefined
+type arrayType = string | HTMLElement | NodeList | Element[] | undefined | null
 type elementType = string | HTMLElement | undefined | null
 
 interface OptionsInterface {
-    triggerElement: string | Element[]
+    triggerElement: string | HTMLElement | NodeList | Element[]
     targetModal: string | HTMLElement
     openClass: string
     closeClass: string
@@ -137,14 +135,20 @@ class TsModal {
      * @returns Returns array for elements
      * @private
      */
-    private _toElementArray(element: arrayType) {
+    private _toElementArray(element: arrayType): any[] {
         if (typeof element === 'string' ) {
             return [...document.querySelectorAll(element)]
         }
-        if (element) {
-            return [...element]
+        if (Array.isArray(element)) {
+            return element
         }
-        throw new Error(`Value cannot be undefined, expected string or array`)
+        if (element && (element as NodeList).length !== (0 || undefined)) {
+            return Array.prototype.slice.call(element)
+        }
+        if (element) {
+            return [element]
+        }
+        throw new Error(`value cannot be undefined or null, expected string, HTMLElement or array`)
     }
     
     /**
@@ -184,6 +188,6 @@ class TsModal {
     }
 }
 
-export default TsModal
+(window as any).TsModal = TsModal
 
-new TsModal()
+export default TsModal

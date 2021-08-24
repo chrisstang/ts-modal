@@ -1,6 +1,5 @@
-import "./style.scss";
 interface OptionsInterface {
-    triggerElement: string | Element[];
+    triggerElement: string | HTMLElement | NodeList | Element[];
     targetModal: string | HTMLElement;
     openClass: string;
     closeClass: string;

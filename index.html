@@ -5,6 +5,7 @@
         <link rel="icon" type="image/svg+xml" href="favicon.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Vite App</title>
+        <link rel="stylesheet" href="/src/style.scss">
     </head>
     <body>
         <div id="app"></div>
@@ -54,5 +55,10 @@
         </div>
 
         <script type="module" src="/src/index.ts"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                new TsModal()
+            })
+        </script>
     </body>
 </html>

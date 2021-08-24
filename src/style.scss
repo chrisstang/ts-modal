@@ -101,7 +101,7 @@ button {
 }
 
 
-@keyframes tsfadeIn {
+@keyframes tsFadeIn {
     from {
         opacity: 0;
     }
@@ -110,7 +110,7 @@ button {
     }
 }
 
-@keyframes tsfadeOut {
+@keyframes tsFadeOut {
     from {
         opacity: 1;
     }
@@ -119,7 +119,7 @@ button {
     }
 }
 
-@keyframes tsslideIn {
+@keyframes tsSlideIn {
     from {
         transform: translateY(15%);
     }
@@ -128,7 +128,7 @@ button {
     }
 }
 
-@keyframes tsslideOut {
+@keyframes tsSlideOut {
     from {
         transform: translateY(0);
     }
@@ -148,22 +148,22 @@ button {
 
 .ts-modal[aria-hidden="false"] {
     .modal__overlay {
-        animation: tsfadeIn 0.3s cubic-bezier(0, 0, 0.2, 1);
+        animation: tsFadeIn 0.3s cubic-bezier(0, 0, 0.2, 1);
     }
 
     .modal__container {
-        animation: tsslideIn 0.3s cubic-bezier(0, 0, 0.2, 1);
+        animation: tsSlideIn 0.3s cubic-bezier(0, 0, 0.2, 1);
     }
 }
 
 
 .ts-modal[aria-hidden="true"] {
     .modal__overlay {
-       animation: tsfadeOut 0.3s cubic-bezier(0, 0, 0.2, 1);
+       animation: tsFadeOut 0.3s cubic-bezier(0, 0, 0.2, 1);
     }
 
     .modal__container {
-        animation: tsslideOut 0.3s cubic-bezier(0, 0, 0.2, 1);
+        animation: tsSlideOut 0.3s cubic-bezier(0, 0, 0.2, 1);
     }
 }
 
