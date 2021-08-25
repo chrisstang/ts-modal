@@ -179,9 +179,9 @@ class TsModal {
         let code
       
         if (event.key !== undefined) {
-          code = event.key
+            code = event.key
         } else if (event.keyCode !== undefined) {
-          code = event.keyCode;
+            code = event.keyCode;
         }
       
         return code
