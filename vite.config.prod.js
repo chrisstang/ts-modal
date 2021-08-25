@@ -1,6 +1,5 @@
 // @ts-check
 import { defineConfig } from 'vite'
-import dts from 'vite-dts'
 
 export default defineConfig({
     build: {
@@ -8,7 +7,7 @@ export default defineConfig({
             entry: 'src/index.ts',
             name: 'TsModal',
             fileName: format => 'ts-modal.min.js',
-            formats: ['es']
+            formats: ['iife']
         },
         rollupOptions: {
             output: {
@@ -21,8 +20,5 @@ export default defineConfig({
         sourcemap: true,
         // Reduce bloat from legacy polyfills.
         target: 'esnext',
-    },
-    plugins: [
-        dts()
-    ],
+    }
 })
