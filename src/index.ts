@@ -37,6 +37,9 @@ class TsModal {
         this.modal = this._toElement(this.options.targetModal)
         this.activeModal = false
 
+        if (this.modal?.getAttribute('aria-hidden') === null)
+        this.modal?.setAttribute('aria-hidden', 'true')
+
         this.attachHandler()
         this.attachCloseHandler()
         this.attachKeydown()
@@ -75,9 +78,9 @@ class TsModal {
      * @param {Event} event inherit click event
      */
     showModal(event?: Event) {
-        if (this.options.openClass) {
-            this.modal?.setAttribute('aria-hidden', 'false')
-            this.modal?.classList.add(this.options.openClass)
+        if (this.modal && this.options.openClass) {
+            this.modal.setAttribute('aria-hidden', 'false')
+            this.modal.classList.add(this.options.openClass)
             this.activeModal = true
         }
 
