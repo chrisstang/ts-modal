@@ -158,6 +158,51 @@ describe('Modal', () => {
             })
         })
         
+        it('should bypass set state for modal if `openClass` option is undefined', () => {
+            const clickHandler = jest.fn()
+
+            fixtureEl.innerHTML = '<div class="modal">Modal</div>'
+            const tsModal = new TsModal({
+                openClass: undefined
+            })
+            jest.spyOn(tsModal, 'closeModal')
+
+            tsModal.elements.forEach( button => {
+                button.addEventListener('click', clickHandler)
+                button.click()
+                
+                expect(tsModal.options.openClass).toBeUndefined()
+                expect(tsModal.modal.getAttribute('aria-hidden')).toEqual('true')
+                expect(tsModal.modal.classList.contains('is-open')).toEqual(false)
+                expect(tsModal.activeModal).toBeFalsy()
+            })
+
+            tsModal.showModal().closeModal()
+            expect(tsModal.options.openClass).toBeUndefined()
+        })
+        
+        it('should bypass event preventDefault method if `preventDefault` option is false', () => {
+            let event = { preventDefault: () => {} }
+            jest.spyOn(event, 'preventDefault')
+    
+            fixtureEl.innerHTML = '<div class="modal">Modal</div>'
+            const tsModal = new TsModal({
+                preventDefault: false
+            })
+            jest.spyOn(tsModal, 'showModal')
+
+            tsModal.elements.forEach( button => {
+                button.addEventListener('click', function(e) {
+                    event = Object.assign(event, e)
+                    tsModal.showModal(event)
+                })
+                button.click()
+                
+                expect(tsModal.options.preventDefault).toBeFalsy()
+                expect(event.preventDefault).not.toHaveBeenCalled()
+            })
+        })
+        
         it('should trigger modal adding active state/class', () => {
             const clickHandler = jest.fn()
     
@@ -172,21 +217,6 @@ describe('Modal', () => {
                 expect(tsModal.modal.classList.contains('is-open')).toEqual(true)
                 expect(tsModal.activeModal).toBeTruthy()
             })
-        })
-
-        it('should trigger onShow callback', () => {
-            fixtureEl.innerHTML = '<div class="modal">Modal</div>'
-            const tsModal = new TsModal()
-            tsModal.onShow = jest.fn()
-            
-            jest.spyOn(tsModal, 'showModal')
-            jest.spyOn(tsModal, 'onShow')
-
-            tsModal.showModal()
-            tsModal.onShow()
-            
-            expect(tsModal.showModal).toHaveBeenCalled()
-            expect(tsModal.onShow).toHaveBeenCalled()
         })
     })
 
@@ -253,36 +283,129 @@ describe('Modal', () => {
         })
     })
 
+    describe('Callback', () => {
+        it('should not trigger onShow callback', () => {
+            const tsModal = new TsModal()
+            tsModal.modal = undefined
+            
+            jest.spyOn(tsModal, 'showModal')
+            jest.spyOn(tsModal.options, 'onShow')
+            
+            tsModal.showModal()
+            
+            expect(tsModal.showModal).toHaveBeenCalled()
+            expect(tsModal.options.onShow).not.toHaveBeenCalled()
+        })
+
+        it('should trigger onShow callback', () => {
+            fixtureEl.innerHTML = '<div class="modal">Modal</div>'
+            const tsModal = new TsModal()
+            tsModal.options.onShow = jest.fn()
+            
+            jest.spyOn(tsModal, 'showModal')
+            jest.spyOn(tsModal.options, 'onShow').mockImplementation( () => 'on show')
+
+            tsModal.showModal()
+            const onShowResponse = tsModal.options.onShow()
+            
+            expect(tsModal.showModal).toHaveBeenCalled()
+            expect(tsModal.options.onShow).toHaveBeenCalled()
+            expect(onShowResponse).toBe('on show')
+        })
+
+        it('should not trigger onClose callback', () => {
+            const tsModal = new TsModal()
+            tsModal.modal = undefined
+            
+            jest.spyOn(tsModal, 'closeModal')
+            jest.spyOn(tsModal.options, 'onClose')
+            
+            tsModal.closeModal()
+            
+            expect(tsModal.closeModal).toHaveBeenCalled()
+            expect(tsModal.options.onClose).not.toHaveBeenCalled()
+        })
+
+        it('should trigger onClose callback', () => {
+            fixtureEl.innerHTML = '<div class="modal">Modal</div>'
+            const tsModal = new TsModal()
+            tsModal.options.onClose = jest.fn()
+            
+            jest.spyOn(tsModal, 'closeModal')
+            jest.spyOn(tsModal.options, 'onClose').mockImplementation( () => 'on close')
+
+            tsModal.closeModal()
+            const onCloseResponse = tsModal.options.onClose()
+            
+            expect(tsModal.closeModal).toHaveBeenCalled()
+            expect(tsModal.options.onClose).toHaveBeenCalled()
+            expect(onCloseResponse).toBe('on close')
+        })
+    })
+
     describe('Escape keydown', () => {
-        it('should trigger keydown without calling close modal', () => {
-            const keydownHandler = jest.fn()
+        it('should trigger keydown without calling close modal, if activeModal is false', () => {
+            const event = { key: 'Escape' }
             fixtureEl.innerHTML = '<div class="modal">Modal</div>'
             const tsModal = new TsModal()
 
-            const keyCode = jest.spyOn(tsModal, '_getKeyCode').mockImplementation( () => 'Escape')
+            jest.spyOn(tsModal, '_getKeyCode')
             jest.spyOn(tsModal, 'closeModal')
-            document.addEventListener('keydown', keydownHandler)
             
             tsModal.activeModal = false
-            document.dispatchEvent(new KeyboardEvent('keydown', { 'key': keyCode }))
-
-            expect(tsModal._getKeyCode()).toBe('Escape')
+            document.dispatchEvent(new KeyboardEvent('keydown', event))
+            
+            expect(tsModal._getKeyCode).toHaveBeenCalled()
+            expect(tsModal._getKeyCode(event)).toBe('Escape')
             expect(tsModal.closeModal).toHaveBeenCalledTimes(0)
         })
 
-        it('should trigger keydown and calling close modal', () => {
-            const keydownHandler = jest.fn()
+        it('should trigger keydown without calling close modal, if key is undefined', () => {
+            const event = { key: undefined }
             fixtureEl.innerHTML = '<div class="modal">Modal</div>'
             const tsModal = new TsModal()
 
-            const keyCode = jest.spyOn(tsModal, '_getKeyCode').mockImplementation( () => 'Escape')
+            jest.spyOn(tsModal, '_getKeyCode')
             jest.spyOn(tsModal, 'closeModal')
-            document.addEventListener('keydown', keydownHandler)
             
             tsModal.activeModal = true
-            document.dispatchEvent(new KeyboardEvent('keydown', { 'key': keyCode }))
+            document.dispatchEvent(new KeyboardEvent('keydown', event))
 
-            expect(tsModal._getKeyCode()).toBe('Escape')
+            expect(tsModal._getKeyCode).toHaveBeenCalled()
+            expect(tsModal._getKeyCode(event)).toBeUndefined()
+            expect(tsModal.closeModal).toHaveBeenCalledTimes(0)
+        })
+
+        it('should trigger keydown `key: Escape` and calling close modal', () => {
+            const event = { key: 'Escape' }
+            fixtureEl.innerHTML = '<div class="modal">Modal</div>'
+            const tsModal = new TsModal()
+
+            jest.spyOn(tsModal, '_getKeyCode')
+            jest.spyOn(tsModal, 'closeModal')
+            
+            tsModal.activeModal = true
+            document.dispatchEvent(new KeyboardEvent('keydown', event))
+
+            expect(tsModal._getKeyCode).toHaveBeenCalled()
+            expect(tsModal._getKeyCode(event)).toBe('Escape')
+            expect(tsModal.closeModal).toHaveBeenCalled()
+        })
+
+        it('should trigger keydown `keyCode: 27` and calling close modal', () => {
+            const event = { keyCode: 27, preventDefault: () => {} }
+            fixtureEl.innerHTML = '<div class="modal">Modal</div>'
+            const tsModal = new TsModal()
+
+            jest.spyOn(tsModal, '_getKeyCode')
+            jest.spyOn(tsModal, 'closeModal')
+            
+            tsModal.activeModal = true
+            document.dispatchEvent(new KeyboardEvent('keydown', event))
+            tsModal.closeModal(event) // programatically mock and call method
+            
+            expect(tsModal._getKeyCode).toHaveBeenCalled()
+            expect(tsModal._getKeyCode(event)).toBe(27)
             expect(tsModal.closeModal).toHaveBeenCalled()
         })
     })

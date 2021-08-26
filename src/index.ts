@@ -67,7 +67,7 @@ class TsModal {
             const keyCode = this._getKeyCode(event)
 
             // Close Modal
-            if (this.activeModal && keyCode === ('Escape' || 27) ) {
+            if (this.activeModal && keyCode === 'Escape' || keyCode === 27 ) {
                 this.closeModal(event)
             }
         })
