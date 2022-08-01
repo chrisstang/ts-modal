@@ -1,3 +1,5 @@
+$color-primary: #00449e;
+
 // Basic Modal Styles
 button {
     cursor: pointer;
@@ -41,7 +43,7 @@ button {
     font-weight: 600;
     font-size: 1.25rem;
     line-height: 1.25;
-    color: #00449e;
+    color: $color-primary;
     box-sizing: border-box;
 }
 
@@ -73,7 +75,6 @@ button {
     border-style: none;
     border-width: 0;
     cursor: pointer;
-    -webkit-appearance: button;
     text-transform: none;
     overflow: visible;
     line-height: 1.15;
@@ -82,22 +83,17 @@ button {
     -moz-osx-font-smoothing: grayscale;
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
-    -webkit-transform: translateZ(0);
     transform: translateZ(0);
-    transition: -webkit-transform 0.25s ease-out;
-    transition: transform 0.25s ease-out;
-    transition: transform 0.25s ease-out, -webkit-transform 0.25s ease-out;
-}
-
-.modal__btn:focus,
-.modal__btn:hover {
-    -webkit-transform: scale(1.05);
-    transform: scale(1.05);
+    transition: all 0.25s ease-out;
 }
 
 .modal__btn-primary {
-    background-color: #00449e;
+    background-color: $color-primary;
     color: #fff;
+
+    &:hover {
+        background-color: lighten($color-primary, 5%);
+    }
 }
 
 

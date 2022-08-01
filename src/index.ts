@@ -3,7 +3,6 @@ type elementType = string | HTMLElement | undefined | null
 
 interface OptionsInterface {
     triggerElement: string | HTMLElement | NodeList | Element[]
-    targetModal: string | HTMLElement
     openClass: string
     closeClass: string
     preventDefault: boolean
@@ -14,7 +13,6 @@ interface OptionsInterface {
 class TsModal {
     static defaultOptions: OptionsInterface = {
         triggerElement: '.ts-modal-toggle',
-        targetModal: '.modal',
         openClass: 'is-open',
         closeClass: 'ts-close',
         preventDefault: true,
@@ -25,6 +23,7 @@ class TsModal {
     options: Partial<OptionsInterface>
     elements?: Element[]
     modal?: Element | null
+    modals: Element[]
     activeModal?: boolean
 
     constructor(options: Partial<OptionsInterface> = {}) {
@@ -34,11 +33,8 @@ class TsModal {
         }
 
         this.elements = this._toElementArray(this.options.triggerElement)
-        this.modal = this._toElement(this.options.targetModal)
+        this.modals = []
         this.activeModal = false
-
-        if (this.modal?.getAttribute('aria-hidden') === null)
-        this.modal?.setAttribute('aria-hidden', 'true')
 
         this.attachHandler()
         this.attachCloseHandler()
@@ -46,19 +42,38 @@ class TsModal {
     }
 
     attachHandler() {
-        this.elements?.forEach( el => {
-            el.addEventListener('click', event => this.showModal(event))
+        this.elements?.forEach( element => {
+            const targetId = element.getAttribute('href')
+            if (!targetId || targetId === '#')
+            return console.error(`Please provide a valid ID or class`)
+
+            const modal = document.querySelector(targetId)
+            if (!modal)
+            return console.error(`Could not find find element with '${targetId}'`)
+
+            if (modal.getAttribute('aria-hidden') === null)
+            modal.setAttribute('aria-hidden', 'true')
+            
+            if (!this.modals.includes(modal))
+            this.modals.push(modal)
+
+            element.addEventListener('click', event => this.showModal(modal, event))
         })
+
+        if (this.modals.length === 0)
+        throw new Error(`Could not find any modal`)
     }
 
     attachCloseHandler() {
-        this.modal?.addEventListener('click', event => {
-            if (event.target === null 
-                || this.options.closeClass === undefined
-                || !(event.target as Element).classList.contains(this.options.closeClass)
-            ) return
-
-            this.closeModal(event)
+        this.modals.forEach( modal => {
+            modal.addEventListener('click', event => {
+                if (event.target === null 
+                    || this.options.closeClass === undefined
+                    || !(event.target as Element).classList.contains(this.options.closeClass)
+                ) return
+    
+                this.closeModal(modal, event)
+            })
         })
     }
 
@@ -68,16 +83,20 @@ class TsModal {
 
             // Close Modal
             if (this.activeModal && keyCode === 'Escape' || keyCode === 27 ) {
-                this.closeModal(event)
+                if (this.modal)
+                this.closeModal(this.modal, event)
             }
         })
     }
 
     /**
      * Show Modal
+     * @param {Element} modal individual modal for trigger
      * @param {Event} event inherit click event
      */
-    showModal(event?: Event) {
+    showModal(modal?: Element, event?: Event) {
+        this.modal = modal
+
         if (this.modal && this.options.openClass) {
             this.modal.setAttribute('aria-hidden', 'false')
             this.modal.classList.add(this.options.openClass)
@@ -102,9 +121,13 @@ class TsModal {
     
     /**
      * Close Modal
+     * @param {Element} modal individual modal for trigger
      * @param {Event} event inherit click/keyboard event
      */
-    closeModal(event?: Event) {
+    closeModal(modal?: Element,event?: Event) {
+        if (modal)
+        this.modal = modal
+
         if (this.options.openClass) {
             const openClass = this.options.openClass
             this.modal?.setAttribute('aria-hidden', 'true')
