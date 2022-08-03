@@ -36,6 +36,8 @@ It will automatically find all trigger elements with valid `href` id/class.
 
 Open/close modal are not included with inline css, you will need to self define css animation for open or close state.
 
+Or just copy the css from the path here `src/style.scss`.
+
 Dynamically show/close modal via method, passing element as argument:
 ``` javascript
 // Open modal
