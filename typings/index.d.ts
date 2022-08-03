@@ -1,6 +1,5 @@
 interface OptionsInterface {
     triggerElement: string | HTMLElement | NodeList | Element[];
-    targetModal: string | HTMLElement;
     openClass: string;
     closeClass: string;
     preventDefault: boolean;
@@ -12,6 +11,7 @@ declare class TsModal {
     options: Partial<OptionsInterface>;
     elements?: Element[];
     modal?: Element | null;
+    modals: Element[];
     activeModal?: boolean;
     constructor(options?: Partial<OptionsInterface>);
     attachHandler(): void;
@@ -19,14 +19,16 @@ declare class TsModal {
     attachKeydown(): void;
     /**
      * Show Modal
+     * @param {HTMLElement} modal individual modal for trigger
      * @param {Event} event inherit click event
      */
-    showModal(event?: Event): this;
+    showModal(modal: HTMLElement, event?: Event): this;
     /**
      * Close Modal
+     * @param {HTMLElement} modal individual modal for trigger
      * @param {Event} event inherit click/keyboard event
      */
-    closeModal(event?: Event): this;
+    closeModal(modal: HTMLElement, event?: Event): this;
     /**
      * Helper to return pure array
      * @returns Returns array for elements
@@ -38,7 +40,6 @@ declare class TsModal {
      * @returns Returns HTMLElement
      * @private
      */
-    private _toElement;
     /**
      * Helper to return key code value from keyboard
      * @param event keyboard event

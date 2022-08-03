@@ -4,93 +4,90 @@
         <meta charset="UTF-8" />
         <link rel="icon" type="image/svg+xml" href="favicon.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Vite App</title>
+        <title>TS Modal</title>
+        <meta name="description" content="Simple library for Modal built using TypeScript.">
         <link rel="stylesheet" href="/src/style.scss">
     </head>
     <body>
-        <div id="app"></div>
-        <a href="#modal-1" class="ts-modal-toggle">Link 1</a>
-        <a href="#modal-2" class="ts-modal-toggle">Link 2</a>
-        <a href="#modal-2" class="ts-modal-toggle">Link 3</a>
-
-        <div
-            class="modal ts-modal"
-            id="modal-1"
-
-        >
-            <div class="modal__overlay ts-close" tabindex="-1">
-                <div
-                    class="modal__container"
-                    role="dialog"
-                    aria-modal="true"
-                    aria-labelledby="modal-1-title"
-                >
-                    <header class="modal__header">
-                        <h2 class="modal__title" id="modal-1-title">
-                            Modal 1
-                        </h2>
-                        <button
-                            class="modal__close ts-close"
-                            aria-label="Close modal"
-                        ></button>
-                    </header>
-                    <div class="modal__content" id="modal-1-content">
-                        <p>To close modal hit the <code>esc</code> button, click on the
-                            overlay or just click the close button.
-                        </p>
+        <div class="container">
+            <h1>TS Modal</h1>
+            <p>Simple library for Modal built using TypeScript.</p>
+            <hr />
+            <a href="#modal-1" class="btn btn-primary ts-modal-toggle">Link 1</a>
+            <a href="#modal-2" class="btn btn-primary ts-modal-toggle">Link 2</a>
+            <a href="#modal-2" class="btn btn-primary ts-modal-toggle">Link 3</a>
+    
+            <div class="modal ts-modal" id="modal-1">
+                <div class="modal__overlay ts-close" tabindex="-1">
+                    <div
+                        class="modal__container"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="modal-1-title"
+                    >
+                        <header class="modal__header">
+                            <h2 class="modal__title" id="modal-1-title">
+                                Modal 1
+                            </h2>
+                            <button
+                                class="modal__close ts-close"
+                                aria-label="Close modal"
+                            ></button>
+                        </header>
+                        <div class="modal__content" id="modal-1-content">
+                            <p>To close modal hit the <code>esc</code> button, click on the
+                                overlay or just click the close button.
+                            </p>
+                        </div>
+                        <footer class="modal__footer">
+                            <button class="btn btn-primary">
+                                Continue
+                            </button>
+                            <button
+                                class="btn ts-close"
+                                aria-label="Close this dialog window"
+                            >
+                                Close
+                            </button>
+                        </footer>
                     </div>
-                    <footer class="modal__footer">
-                        <button class="modal__btn modal__btn-primary">
-                            Continue
-                        </button>
-                        <button
-                            class="modal__btn ts-close"
-                            aria-label="Close this dialog window"
-                        >
-                            Close
-                        </button>
-                    </footer>
                 </div>
             </div>
-        </div>
-
-        <div
-            class="modal ts-modal"
-            id="modal-2"
-
-        >
-            <div class="modal__overlay ts-close" tabindex="-1">
-                <div
-                    class="modal__container"
-                    role="dialog"
-                    aria-modal="true"
-                    aria-labelledby="modal-1-title"
-                >
-                    <header class="modal__header">
-                        <h2 class="modal__title" id="modal-1-title">
-                            Modal 2
-                        </h2>
-                        <button
-                            class="modal__close ts-close"
-                            aria-label="Close modal"
-                        ></button>
-                    </header>
-                    <div class="modal__content" id="modal-1-content">
-                        <p>To close modal hit the <code>esc</code> button, click on the
-                            overlay or just click the close button.
-                        </p>
+    
+            <div class="modal ts-modal" id="modal-2">
+                <div class="modal__overlay ts-close" tabindex="-1">
+                    <div
+                        class="modal__container"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="modal-1-title"
+                    >
+                        <header class="modal__header">
+                            <h2 class="modal__title" id="modal-1-title">
+                                Modal 2
+                            </h2>
+                            <button
+                                class="modal__close ts-close"
+                                aria-label="Close modal"
+                            ></button>
+                        </header>
+                        <div class="modal__content" id="modal-1-content">
+                            <p>To close modal hit the <code>esc</code> button, click on the
+                                overlay or just click the close button.
+                            </p>
+                        </div>
+                        <footer class="modal__footer">
+                            <button class="btn btn-primary">
+                                Continue
+                            </button>
+                            <button
+                                class="btn ts-close"
+                                aria-label="Close this dialog window"
+                            >
+                                Close
+                            </button>
+                        </footer>
                     </div>
-                    <footer class="modal__footer">
-                        <button class="modal__btn modal__btn-primary">
-                            Continue
-                        </button>
-                        <button
-                            class="modal__btn ts-close"
-                            aria-label="Close this dialog window"
-                        >
-                            Close
-                        </button>
-                    </footer>
                 </div>
             </div>
         </div>
@@ -98,14 +95,7 @@
         <script type="module" src="/src/index.ts"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                new TsModal({
-                    onShow: function(modal) {
-                        console.log(modal)
-                    },
-                    onClose: function(modal) {
-                        console.log(modal)
-                    },
-                })
+                new TsModal()
             })
         </script>
     </body>

@@ -1,13 +1,13 @@
 import TsModal from '../index'
 
-const fixtureId = 'fixture'
 const fixtureClass = 'ts-modal-toggle'
-const getFixture = () => {
+const getFixture = (fixtureId = 'fixture') => {
     let fixtureEl = document.getElementById(fixtureId)
   
     if (!fixtureEl) {
-      fixtureEl = document.createElement('div')
+      fixtureEl = document.createElement('a')
       fixtureEl.setAttribute('id', fixtureId)
+      fixtureEl.setAttribute('href', '#modal-1')
       fixtureEl.classList.add(fixtureClass)
       fixtureEl.style.position = 'absolute'
       fixtureEl.style.top = '-10000px'
@@ -20,16 +20,61 @@ const getFixture = () => {
     return fixtureEl
 }
 
+const getModal = () => {
+    let modalEl = document.getElementById('modal-1')
+  
+    if (!modalEl) {
+      modalEl = document.createElement('div')
+      modalEl.setAttribute('id', 'modal-1')
+      modalEl.setAttribute('aria-hidden', 'true')
+      modalEl.classList.add('modal')
+      modalEl.style.position = 'absolute'
+      modalEl.style.top = '-10000px'
+      modalEl.style.left = '-10000px'
+      modalEl.style.width = '10000px'
+      modalEl.style.height = '10000px'
+      document.body.append(modalEl)
+    }
+  
+    return modalEl
+}
+
 
 describe('Modal', () => {
     let fixtureEl
+    let modalEl
 
     beforeAll(() => {
         fixtureEl = getFixture()
+        modalEl = getModal()
+        jest.spyOn(console, 'error').mockImplementation(() => {})
+    })
+
+    beforeEach(() => {
+        fixtureEl.setAttribute('href', '#modal-1')
+        modalEl.setAttribute('id', 'modal-1')
+        modalEl.setAttribute('aria-hidden', 'true')
+
+        const fixtureEl2 = document.getElementById('fixture-2')
+        if (fixtureEl2) {
+            document.body.removeChild(fixtureEl2)
+        }
+    })
+
+    afterAll(() => {
+        console.error.mockRestore();
+    })
+
+    afterEach(() => {
+        console.error.mockClear();
     })
 
     it('find fixture element', () => {
         expect(fixtureEl).not.toBeNull
+    })
+
+    it('find modal element', () => {
+        expect(modalEl).not.toBeNull
     })
 
     it('should return modal as the instance of module object', () => {
@@ -37,10 +82,39 @@ describe('Modal', () => {
         expect(tsModal).toBeInstanceOf(TsModal);
     })
 
-    describe('Check buttons length', () => {
+    describe('Check buttons and modals', () => {
         it('should return button elements more than 1', () => {
             const tsModal = new TsModal()
             expect(tsModal.elements.length).toBeGreaterThanOrEqual(1)
+        })
+
+        it('should console error if not provide a valid ID', () => {
+            fixtureEl.setAttribute('href', '#')
+
+            expect(() => new TsModal()).toThrow()
+            expect(console.error).toHaveBeenCalled()
+        })
+
+        it('should console error if not provide a valid modal element', () => {
+            modalEl.setAttribute('id', 'modal-2')
+
+            expect(() => new TsModal()).toThrow()
+            expect(console.error).toHaveBeenCalled()
+        })
+
+        it('should set attribute for `aria-hidden` if modal does not have `aria-hidden` attribute', () => {
+            modalEl.removeAttribute('aria-hidden')
+            const tsModal = new TsModal()
+            tsModal.modal = modalEl
+
+            expect(tsModal.modal.getAttribute('aria-hidden')).toEqual('true')
+        })
+
+        it('should includes modal in an array once only if the modal was already inside the array', () => {
+            getFixture('fixture-2')
+            const tsModal = new TsModal()
+
+            expect(tsModal.modals.length).toBeGreaterThan(0)
         })
     })
 
@@ -102,50 +176,47 @@ describe('Modal', () => {
         })
     })
 
-    describe('Convert to element, expect valid modal element', () => {
-        it('should return element if arguments is string', () => {
-            fixtureEl.innerHTML = '<div class="modal">Modal</div>'
-            const tsModal = new TsModal()
-            const spy = jest.spyOn(tsModal, '_toElement')
-            const element = tsModal._toElement('.modal')
+    // describe('Convert to element, expect valid modal element', () => {
+    //     it('should return element if arguments is string', () => {
+    //         fixtureEl.innerHTML = '<div class="modal">Modal</div>'
+    //         const tsModal = new TsModal()
+    //         const spy = jest.spyOn(tsModal, '_toElement')
+    //         const element = tsModal._toElement('.modal')
 
-            expect(spy).toHaveBeenCalled()
-            expect(element).not.toBeNull()
-            expect(element).toEqual(tsModal.modal)
-        })
+    //         expect(spy).toHaveBeenCalled()
+    //         expect(element).not.toBeNull()
+    //     })
 
-        it('should return element if arguments is element only', () => {
-            fixtureEl.innerHTML = '<div class="modal">Modal</div>'
-            const queryElement = document.querySelector('.modal')
-            const tsModal = new TsModal()
-            const spy = jest.spyOn(tsModal, '_toElement')
-            const element = tsModal._toElement(queryElement)
+    //     it('should return element if arguments is element only', () => {
+    //         fixtureEl.innerHTML = '<div class="modal">Modal</div>'
+    //         const queryElement = document.querySelector('.modal')
+    //         const tsModal = new TsModal()
+    //         const spy = jest.spyOn(tsModal, '_toElement')
+    //         const element = tsModal._toElement(queryElement)
 
-            expect(spy).toHaveBeenCalled()
-            expect(element).not.toBeNull()
-            expect(element).toEqual(tsModal.modal)
-        })
+    //         expect(spy).toHaveBeenCalled()
+    //         expect(element).not.toBeNull()
+    //     })
 
-        it('should return error if element is null or undefined', () => {
-            fixtureEl.innerHTML = '<div class="modal">Modal</div>'
-            const tsModal = new TsModal()
-            jest.spyOn(tsModal, '_toElement')
+    //     it('should return error if element is null or undefined', () => {
+    //         fixtureEl.innerHTML = '<div class="modal">Modal</div>'
+    //         const tsModal = new TsModal()
+    //         jest.spyOn(tsModal, '_toElement')
             
-            expect( () => {
-                tsModal._toElement(undefined)
-            }).toThrow()
+    //         expect( () => {
+    //             tsModal._toElement(undefined)
+    //         }).toThrow()
 
-            expect( () => {
-                tsModal._toElement(null)
-            }).toThrow()
-        })
-    })
+    //         expect( () => {
+    //             tsModal._toElement(null)
+    //         }).toThrow()
+    //     })
+    // })
 
     describe('Trigger button click handler', () => {
         it('should trigger button click and show modal handler', () => {
             const clickHandler = jest.fn()
     
-            fixtureEl.innerHTML = '<div class="modal">Modal</div>'
             const tsModal = new TsModal()
             jest.spyOn(tsModal, 'showModal')
 
@@ -161,11 +232,10 @@ describe('Modal', () => {
         it('should bypass set state for modal if `openClass` option is undefined', () => {
             const clickHandler = jest.fn()
 
-            fixtureEl.innerHTML = '<div class="modal">Modal</div>'
             const tsModal = new TsModal({
                 openClass: undefined
             })
-            jest.spyOn(tsModal, 'closeModal')
+            jest.spyOn(tsModal, 'showModal')
 
             tsModal.elements.forEach( button => {
                 button.addEventListener('click', clickHandler)
@@ -185,7 +255,6 @@ describe('Modal', () => {
             let event = { preventDefault: () => {} }
             jest.spyOn(event, 'preventDefault')
     
-            fixtureEl.innerHTML = '<div class="modal">Modal</div>'
             const tsModal = new TsModal({
                 preventDefault: false
             })
@@ -194,7 +263,7 @@ describe('Modal', () => {
             tsModal.elements.forEach( button => {
                 button.addEventListener('click', function(e) {
                     event = Object.assign(event, e)
-                    tsModal.showModal(event)
+                    tsModal.showModal(tsModal.modal, event)
                 })
                 button.click()
                 
@@ -224,10 +293,10 @@ describe('Modal', () => {
         it('should click without trigger close modal handler', () => {
             const clickHandler = jest.fn()
     
-            fixtureEl.innerHTML = '<div class="modal">Modal</div>'
             const tsModal = new TsModal()
             jest.spyOn(tsModal, 'closeModal')
 
+            tsModal.modal = modalEl
             tsModal.modal.addEventListener('click', clickHandler)
             tsModal.modal.click()
 
@@ -238,10 +307,11 @@ describe('Modal', () => {
         it('should click and trigger close modal handler', () => {
             const clickHandler = jest.fn()
     
-            fixtureEl.innerHTML = '<div class="modal ts-close">Modal</div>'
             const tsModal = new TsModal()
             jest.spyOn(tsModal, 'closeModal')
 
+            modalEl.classList.add('ts-close')
+            tsModal.modal = modalEl
             tsModal.modal.addEventListener('click', clickHandler)
             tsModal.modal.click()
 
@@ -250,29 +320,30 @@ describe('Modal', () => {
         })
 
         it('should trigger close modal with remove active class & state', () => {
-            fixtureEl.innerHTML = '<div class="modal ts-close">Modal</div>'
             const tsModal = new TsModal()
             jest.spyOn(tsModal, 'closeModal')
 
-            tsModal.closeModal()
+            modalEl.classList.add('ts-close')
+            tsModal.modal = modalEl
+            tsModal.closeModal(modalEl)
 
             expect(tsModal.closeModal).toHaveBeenCalled()
             expect(tsModal.modal.getAttribute('aria-hidden')).toEqual('true')
-            expect(tsModal.modal.classList.contains('is-open')).toEqual(false)
             expect(tsModal.activeModal).toBeFalsy()
         })
 
         it('should trigger close modal with animationend', () => {
             const animationEndCallback = jest.fn()
-            fixtureEl.innerHTML = '<div class="modal ts-close">Modal</div>'
             const tsModal = new TsModal()
             jest.spyOn(tsModal, 'closeModal')
 
             const event = new Event('animationend')
             Object.assign(event, { animationName: 'tsSlideIn' })
 
+            modalEl.classList.add('ts-close')
+            tsModal.modal = modalEl
             tsModal.modal.addEventListener('animationend', animationEndCallback, false)
-            tsModal.closeModal()
+            tsModal.closeModal(modalEl)
             tsModal.modal.dispatchEvent(event)
 
             expect(tsModal.closeModal).toHaveBeenCalled()
@@ -346,7 +417,6 @@ describe('Modal', () => {
     describe('Escape keydown', () => {
         it('should trigger keydown without calling close modal, if activeModal is false', () => {
             const event = { key: 'Escape' }
-            fixtureEl.innerHTML = '<div class="modal">Modal</div>'
             const tsModal = new TsModal()
 
             jest.spyOn(tsModal, '_getKeyCode')
@@ -362,7 +432,6 @@ describe('Modal', () => {
 
         it('should trigger keydown without calling close modal, if key is undefined', () => {
             const event = { key: undefined }
-            fixtureEl.innerHTML = '<div class="modal">Modal</div>'
             const tsModal = new TsModal()
 
             jest.spyOn(tsModal, '_getKeyCode')
@@ -377,15 +446,16 @@ describe('Modal', () => {
         })
 
         it('should trigger keydown `key: Escape` and calling close modal', () => {
-            const event = { key: 'Escape' }
-            fixtureEl.innerHTML = '<div class="modal">Modal</div>'
+            const event = { key: 'Escape', preventDefault: () => {} }
             const tsModal = new TsModal()
 
             jest.spyOn(tsModal, '_getKeyCode')
             jest.spyOn(tsModal, 'closeModal')
             
+            tsModal.modal = modalEl
             tsModal.activeModal = true
             document.dispatchEvent(new KeyboardEvent('keydown', event))
+            tsModal.closeModal(modalEl, event) // programatically mock and call method
 
             expect(tsModal._getKeyCode).toHaveBeenCalled()
             expect(tsModal._getKeyCode(event)).toBe('Escape')
@@ -402,7 +472,7 @@ describe('Modal', () => {
             
             tsModal.activeModal = true
             document.dispatchEvent(new KeyboardEvent('keydown', event))
-            tsModal.closeModal(event) // programatically mock and call method
+            tsModal.closeModal(modalEl, event) // programatically mock and call method
             
             expect(tsModal._getKeyCode).toHaveBeenCalled()
             expect(tsModal._getKeyCode(event)).toBe(27)

@@ -1,5 +1,5 @@
 type arrayType = string | HTMLElement | NodeList | Element[] | undefined | null
-type elementType = string | HTMLElement | undefined | null
+// type elementType = string | HTMLElement | undefined | null
 
 interface OptionsInterface {
     triggerElement: string | HTMLElement | NodeList | Element[]
@@ -10,10 +10,11 @@ interface OptionsInterface {
     onClose: (modal: Element, trigger?: EventTarget, event?: Event) => void
 }
 
+const DEFAULT_OPEN_CLASS = 'is-open'
 class TsModal {
     static defaultOptions: OptionsInterface = {
         triggerElement: '.ts-modal-toggle',
-        openClass: 'is-open',
+        openClass: DEFAULT_OPEN_CLASS,
         closeClass: 'ts-close',
         preventDefault: true,
         onShow: () => {},
@@ -57,7 +58,7 @@ class TsModal {
             if (!this.modals.includes(modal))
             this.modals.push(modal)
 
-            element.addEventListener('click', event => this.showModal(modal, event))
+            element.addEventListener('click', event => this.showModal((modal as HTMLElement), event))
         })
 
         if (this.modals.length === 0)
@@ -72,7 +73,7 @@ class TsModal {
                     || !(event.target as Element).classList.contains(this.options.closeClass)
                 ) return
     
-                this.closeModal(modal, event)
+                this.closeModal((modal as HTMLElement), event)
             })
         })
     }
@@ -84,23 +85,27 @@ class TsModal {
             // Close Modal
             if (this.activeModal && keyCode === 'Escape' || keyCode === 27 ) {
                 if (this.modal)
-                this.closeModal(this.modal, event)
+                this.closeModal((this.modal as HTMLElement), event)
             }
         })
     }
 
     /**
      * Show Modal
-     * @param {Element} modal individual modal for trigger
+     * @param {HTMLElement} modal individual modal for trigger
      * @param {Event} event inherit click event
      */
-    showModal(modal?: Element, event?: Event) {
-        this.modal = modal
+    showModal(modal: HTMLElement, event?: Event) {
+        this.modal = modal ? modal : document.querySelector(modal)
 
         if (this.modal && this.options.openClass) {
             this.modal.setAttribute('aria-hidden', 'false')
             this.modal.classList.add(this.options.openClass)
             this.activeModal = true
+        } else if (this.modal && this.options.openClass === undefined) {
+            this.modal.setAttribute('aria-hidden', 'true')
+            this.modal.classList.remove(DEFAULT_OPEN_CLASS)
+            this.activeModal = false
         }
 
         if (this.options.preventDefault)
@@ -121,12 +126,11 @@ class TsModal {
     
     /**
      * Close Modal
-     * @param {Element} modal individual modal for trigger
+     * @param {HTMLElement} modal individual modal for trigger
      * @param {Event} event inherit click/keyboard event
      */
-    closeModal(modal?: Element,event?: Event) {
-        if (modal)
-        this.modal = modal
+    closeModal(modal: HTMLElement,event?: Event) {
+        this.modal = modal ? modal : document.querySelector(modal)
 
         if (this.options.openClass) {
             const openClass = this.options.openClass
@@ -182,18 +186,18 @@ class TsModal {
      * @returns Returns HTMLElement
      * @private
      */
-    private _toElement(element: elementType) {
-        if (typeof element === 'string' ) {
-            return document.querySelector(element)
-        }
-        if (element) {
-            return element
-        }
-        if (element === undefined) {
-            throw new Error('value cannot be undefined')
-        }
-        throw new Error('value cannot be null')
-    }
+    // private _toElement(element: elementType) {
+    //     if (typeof element === 'string' ) {
+    //         return document.querySelector(element)
+    //     }
+    //     if (element) {
+    //         return element
+    //     }
+    //     if (element === undefined) {
+    //         throw new Error('value cannot be undefined')
+    //     }
+    //     throw new Error('value cannot be null')
+    // }
 
     /**
      * Helper to return key code value from keyboard
