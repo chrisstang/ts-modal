@@ -52,7 +52,7 @@ tsModal.closeModal(modal)
 | ---- | ---- | ------- | ----------- |
 | triggerElement | string / HTMLElement / NodeList | `'.ts-modal-toggle'` | Trigger element for the modal
 | openClass | string | `'.is-open'` | Modal open state class
-| closeClass | string | `ts-close` | Modal close state class |
+| closeClass | string | `'.ts-close'` | Modal close state class |
 | preventDefault | boolean | `true` | Specify whether triggerElement should prevent default event |
 | onShow | function | void | Callback function while showing the modal |
 | onClose | function | void | Callback function while closing the modal |
